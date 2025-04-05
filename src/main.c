@@ -30,6 +30,10 @@ void titleBarButton(int* args) {
     }
 }
 
+void iconButton(int* args) {
+    SDL_Log("%d, %d", args[0], args[1]);
+}
+
 /* This function runs once at startup. */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coopersure");
@@ -70,6 +74,9 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     componentArrayAppend(createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &titleBarButton, (int[]){5,0}, DROPDOWN));
     setButtonDropdown(compArray.array[0]->element.button, 6);
     componentArrayAppend(createDropDown((int[]){4, 5}, 2, 5, 43));
+
+    //test icon button
+    componentArrayAppend(createIconButton((SDL_FRect) {200,100,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){7,0}));
 
     return SDL_APP_CONTINUE;
 }

@@ -7,7 +7,6 @@ static char* assetPath = "../src/assets/";
 static SDL_Renderer* renderer = NULL;
 static SDL_Texture* windowTexture = NULL;
 static SDL_Texture* spriteSheet = NULL;
-//static SDL_Texture* miscSpritesheet = NULL;
 static TTF_Font* w95f = NULL;
 
 #define COMPONENTARRAYINITIALSIZE 4
@@ -84,7 +83,10 @@ static bool drawButton(Button* button, int max) {
     if(button->_.active == false) {return false;}
     
     SDL_FRect dstRect = button->_.dstRect;
-    const int len = getTextSize(button->text, 12).w;
+    int len = 0;
+    if(button->style != ICON) {
+        len = getTextSize(button->text, 12).w;
+    }
         
     SDL_FPoint line1[3] = {
         {dstRect.x+1, dstRect.y + 19},
@@ -100,34 +102,30 @@ static bool drawButton(Button* button, int max) {
 
     switch(button->style) {
         case TITLEBAR:  
-            if (button->state == HOVERED) {
-                SDL_SetRenderDrawColor(renderer,128,128,128,255);
-                SDL_RenderLines(renderer, line1, 3);
-                SDL_SetRenderDrawColor(renderer,255,255,255,255);
-                SDL_RenderLines(renderer, line2, 3);
-                SDL_SetRenderDrawColor(renderer,192,192,192,255);
-                SDL_RenderFillRect(renderer, &bg);
-                drawText(button->text, black, dstRect.x+9, dstRect.y+5, 12);
-
-            } else if (button->state == PRESSED) {  
-                SDL_SetRenderDrawColor(renderer,128,128,128,255);
-                SDL_RenderLines(renderer, line2, 3);
-                SDL_SetRenderDrawColor(renderer,255,255,255,255);
-                SDL_RenderLines(renderer, line1, 3);
-                SDL_SetRenderDrawColor(renderer,192,192,192,255);
-                SDL_RenderFillRect(renderer, &bg);
-                drawText(button->text, black, dstRect.x+10, dstRect.y+6, 12);
-            } else {
+            SDL_FRect rect = button->_.dstRect;
+            int color1 = 128, color2 = 255;
+            if(button->state == PRESSED) {
+                rect.x++;
+                rect.y++;
+                color1 = 255,
+                color2 = 128;
+            } else if (button->state == IDLE) {
                 bg = (SDL_FRect) {dstRect.x+1,dstRect.y,len+15,20};
-                SDL_SetRenderDrawColor(renderer,192,192,192,255);
-                SDL_RenderFillRect(renderer, &bg);
-                drawText(button->text, black, dstRect.x+9, dstRect.y+5, 12);
             }
+
+            if(button->state != IDLE) {
+                SDL_SetRenderDrawColor(renderer, color1,color1,color1,255);
+                SDL_RenderLines(renderer, line1, 3);
+                SDL_SetRenderDrawColor(renderer,color2,color2,color2,255);
+                SDL_RenderLines(renderer, line2, 3);
+            }
+            SDL_SetRenderDrawColor(renderer,192,192,192,255);
+            SDL_RenderFillRect(renderer, &bg);
+            drawText(button->text, black, rect.x+9, rect.y+5, 12);
+
             break;
         
         case DROPDOWN:
-        // const int butWidth = 41+len;
-        // const int butHeight = 17;
             SDL_Color color = black;
             if(button->state != IDLE) {
                 color = white;
@@ -139,29 +137,37 @@ static bool drawButton(Button* button, int max) {
             break;
         
         case ICON:
-        if (button->state == HOVERED) {
-            SDL_SetRenderDrawColor(renderer,128,128,128,255);
-            SDL_RenderLines(renderer, line1, 3);
-            SDL_SetRenderDrawColor(renderer,255,255,255,255);
-            SDL_RenderLines(renderer, line2, 3);
-            SDL_SetRenderDrawColor(renderer,192,192,192,255);
-            SDL_RenderTexture(renderer, spriteSheet, button->clipRect, button->_.dstRect);
-            //TODO finish this and make a function for creating icon button
+            SDL_FPoint line3[3] = {
+                {dstRect.x-1, dstRect.y + 16},
+                {dstRect.x-1, dstRect.y-1},
+                {dstRect.x + 15, dstRect.y-1}
+            };
+            SDL_FPoint line4[3] = {
+                {dstRect.x + 16, dstRect.y-1},
+                {dstRect.x + 16, dstRect.y + 16},
+                {dstRect.x, dstRect.y + 16}
+            };
 
-        } else if (button->state == PRESSED) {  
-            SDL_SetRenderDrawColor(renderer,128,128,128,255);
-            SDL_RenderLines(renderer, line2, 3);
-            SDL_SetRenderDrawColor(renderer,255,255,255,255);
-            SDL_RenderLines(renderer, line1, 3);
+            SDL_FRect rect1 = button->_.dstRect;
+            int color3 = 128, color4 = 255;
+            if(button->state == PRESSED) { 
+                rect1.x++;
+                rect1.y++;
+                color3 = 255,
+                color4 = 128;
+            }
+
+            SDL_FRect bgRect = {dstRect.x, dstRect.y, 16, 16};
             SDL_SetRenderDrawColor(renderer,192,192,192,255);
-            SDL_RenderFillRect(renderer, &bg);
-            drawText(button->text, black, dstRect.x+10, dstRect.y+6, 12);
-        } else {
-            bg = (SDL_FRect) {dstRect.x+1,dstRect.y,len+15,20};
-            SDL_SetRenderDrawColor(renderer,192,192,192,255);
-            SDL_RenderFillRect(renderer, &bg);
-            drawText(button->text, black, dstRect.x+9, dstRect.y+5, 12);
-        }
+            SDL_RenderFillRect(renderer, &bgRect);
+            SDL_RenderTexture(renderer, spriteSheet, &(button->clipRect), &rect1);
+            if(button->state != IDLE) {
+                SDL_SetRenderDrawColor(renderer,color3,color3,color3,255);
+                SDL_RenderLines(renderer, line3, 3);
+                SDL_SetRenderDrawColor(renderer,color4,color4,color4,255);
+                SDL_RenderLines(renderer, line4, 3);
+            }
+
             break;
     }
     return true;
@@ -216,8 +222,7 @@ static bool drawDropdown(Dropdown* dropdown) {
 
 void drawGUI() {
     //draw "window"
-    SDL_FRect dstrect = {0, 0, 640, 360};
-    SDL_RenderTexture(renderer, windowTexture, NULL, &dstrect);
+    SDL_RenderTexture(renderer, windowTexture, NULL, NULL);
 
     drawTextBold("Coppersure", white, 4, 6, 12);
 
@@ -264,34 +269,6 @@ static TextureCacheEntry* createText(const char* string, SDL_Color color, int si
     return test;
 }
 
-// static TextureCacheEntry* createTextShaded(const char* string, SDL_Color color, SDL_Color bgColor, int size) {
-//     char key[strlen(string) + 1];
-//     strcpy(key, string);
-//     char str[1] = "h";
-//     strcat(key, str);
-//     TextureCacheEntry* cachedTexture = cacheGet(textCache, key);
-//     SDL_Log("%s", key);
-//     if (cachedTexture != NULL) {
-//         SDL_Log("loading texture: %s", key);
-//         return cachedTexture;
-//     } 
-
-//     TTF_SetFontSize(w95f, size);
-//     SDL_Surface* surface = TTF_RenderText_Shaded(w95f, string, 0, color, bgColor);
-//     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-//     SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
-//     SDL_DestroySurface(surface);
-
-//     float w = 0, h = 0;
-//     SDL_GetTextureSize(texture, &w, &h);
-//     TextureCacheEntry* test = SDL_malloc(sizeof(TextureCacheEntry));
-//     test->w = w;
-//     test->h = h;
-//     test->texture = texture;
-//     cacheSet(textCache, key, test);
-//     return test;
-// }
-
 int drawText(const char* string, SDL_Color color, int x, int y, int size) {
     TextureCacheEntry* entry = createText(string, color, size);
 
@@ -310,22 +287,34 @@ int drawTextBold(const char* string, SDL_Color color, int x, int y, int size) {
     return entry->w;
 }
 
-// int drawTextShaded(const char* string, SDL_Color color, SDL_Color bgColor, int x, int y, int size) {
-//     TextureCacheEntry* entry = createTextShaded(string, color, bgColor, size);
-
-//     SDL_FRect rect = {x, y, entry->w, entry->h};
-//     SDL_RenderTexture(renderer, entry->texture, NULL, &rect);
-//     return entry->w;
-// }
-
-// int drawTextWrapped(char* string, SDL_Color color, int x, int y, int size, int wrapLength) {
-// TODO implement when needed
-// }
-
 SDL_FRect getTextSize(const char* string, int size) {
     TextureCacheEntry* entry = createText(string, black, size);
 
     return (SDL_FRect) {0,0,entry->w,entry->h};
+}
+
+GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data) {
+    Button* button = SDL_malloc(sizeof(Button));
+
+    button->_.dstRect = rect;
+    button->_.dstRect.w = button->_.dstRect.h = 16;
+    button->clipRect=clipRect;
+    button->callback = callback;
+    button->state = IDLE;
+    button->style = ICON;
+    button->_.active = true;
+    size_t dataSize = sizeof(data);
+    button->callback_data = SDL_malloc(dataSize);
+    if(button->callback_data == NULL) {
+        SDL_Log("Error allocating memory for button callback data");
+        return NULL;
+    }
+    memcpy(button->callback_data, data, dataSize);
+
+    GUIElement* elem = SDL_malloc(sizeof(GUIElement));
+    elem->type = 0;
+    elem->element.button = button;
+    return elem;
 }
 
 GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style) {
@@ -335,7 +324,7 @@ GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* d
     if(style == DROPDOWN) {
         button->_.dstRect = (SDL_FRect) {rect.x, rect.y, getTextSize(text, 12).w + 38, 17};
     } else {
-        button->_.dstRect = (SDL_FRect) {rect.x, rect.y, getTextSize(text, 12).w + 38, 20};
+        button->_.dstRect = (SDL_FRect) {rect.x, rect.y, getTextSize(text, 12).w + 15, 20};
     }
     button->callback = callback;
     button->state = IDLE;

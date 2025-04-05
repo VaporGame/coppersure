@@ -59,7 +59,7 @@ int drawTextBold(const char* string, SDL_Color color, int x, int y, int size);
 // int drawTextWrapped(char* string, SDL_Color color, int x, int y, int size, int wrapLength);
 SDL_FRect getTextSize(const char* string, int size);
 
-// Button createButton(char* text, SDL_FRect rect, SDL_FRect clipRectHovered, SDL_FRect clipRectPressed, void (*callback)(void), ButtonStyle style);
+GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
 GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style);
 void setButtonDropdown(Button* button, int idx);
 void setButtonCallback(Button* buton, int* data);
