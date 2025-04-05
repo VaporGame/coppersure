@@ -12,7 +12,7 @@
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
 
-static float SCALE = 2.0f;
+static float SCALE = 1.0f;
 
 static ComponentArray compArray;
 
@@ -63,21 +63,26 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     initGUI(renderer, &compArray);
 
     //add title bar buttons
-    componentArrayAppend(createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){0,0}, TITLEBAR));
-    componentArrayAppend(createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){1,0}, TITLEBAR));
-    componentArrayAppend(createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){2,0}, TITLEBAR));
-    componentArrayAppend(createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){3,0}, TITLEBAR));
+    createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
+    createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
+    createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
+    createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
 
+    //icon buttons
+    createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {30,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {48,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {79,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {96,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {115,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {147,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
 
-    //test dropdown
-    componentArrayAppend(createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &titleBarButton, (int[]){4,0}, DROPDOWN));
-    componentArrayAppend(createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &titleBarButton, (int[]){5,0}, DROPDOWN));
-    setButtonDropdown(compArray.array[0]->element.button, 6);
-    componentArrayAppend(createDropDown((int[]){4, 5}, 2, 5, 43));
-
-    //test icon button
-    componentArrayAppend(createIconButton((SDL_FRect) {200,100,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){7,0}));
-
+    //dropdowns added last because im too lazy to make them layer correctly
+    //dropdown buttons
+    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &titleBarButton, (int[]){compArray.used,0}, DROPDOWN);
+    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &titleBarButton, (int[]){compArray.used,0}, DROPDOWN);
+    setButtonDropdown(compArray.array[0]->element.button, compArray.used);
+    createDropDown((int[]){11, 12}, 2, 5, 43);
     return SDL_APP_CONTINUE;
 }
 

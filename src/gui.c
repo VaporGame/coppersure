@@ -314,6 +314,7 @@ GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback
     GUIElement* elem = SDL_malloc(sizeof(GUIElement));
     elem->type = 0;
     elem->element.button = button;
+    componentArrayAppend(elem);
     return elem;
 }
 
@@ -342,6 +343,7 @@ GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* d
     GUIElement* elem = SDL_malloc(sizeof(GUIElement));
     elem->type = 0;
     elem->element.button = button;
+    componentArrayAppend(elem);
     return elem;
 }
 
@@ -376,6 +378,7 @@ GUIElement* createDropDown(const int *buttons, size_t size, int x, int y) {
     GUIElement* elem = SDL_malloc(sizeof(GUIElement));
     elem->type = 1;
     elem->element.dropdown = dropdown;
+    componentArrayAppend(elem);
     return elem;
 }
 
