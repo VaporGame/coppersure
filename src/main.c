@@ -1,0 +1,142 @@
+#define SDL_MAIN_USE_CALLBACKS 1
+#include <stdio.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include "gui.h"
+
+#define WINDOW_WIDTH 640
+#define WINDOW_HEIGHT 360
+#define FRAMERATE 30
+
+static SDL_Window *window = NULL;
+static SDL_Renderer *renderer = NULL;
+
+static float SCALE = 2.0f;
+
+static ComponentArray compArray;
+
+void titleBarButton(int* args) {
+    //SDL_Log("%d, %d", args[0], args[1]);
+
+    int dropdownIdx = compArray.array[args[0]]->element.button->dropdownIdx;
+    if(dropdownIdx > 0) {
+        bool state = (args[1] == 1);
+        compArray.array[dropdownIdx]->element.dropdown->_.active = state;
+
+        for(size_t i = 0; i < compArray.array[dropdownIdx]->element.dropdown->buttonsCount; i++) {
+            compArray.array[compArray.array[dropdownIdx]->element.dropdown->buttons[i]]->element.button->_.active = state;
+        }
+    }
+}
+
+/* This function runs once at startup. */
+SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
+    SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coopersure");
+
+    if (!SDL_Init(SDL_INIT_VIDEO)) {
+        SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_CreateWindowAndRenderer("coppersure", WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE, 0, &window, &renderer)) {
+        SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    if (!SDL_SetWindowResizable(window, false)) {
+        SDL_Log("error setting resize %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }  
+    
+    if (!TTF_Init()) {
+        SDL_Log("TTF_Init Error: %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }
+
+    //SDL_SetWindowFullscreen(window, true);
+    SDL_SetRenderScale(renderer, SCALE, SCALE);
+    initGUI(renderer, &compArray);
+
+    //add title bar buttons
+    componentArrayAppend(createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){0,0}, TITLEBAR));
+    componentArrayAppend(createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){1,0}, TITLEBAR));
+    componentArrayAppend(createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){2,0}, TITLEBAR));
+    componentArrayAppend(createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){3,0}, TITLEBAR));
+
+
+    //test dropdown
+    componentArrayAppend(createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &titleBarButton, (int[]){4,0}, DROPDOWN));
+    componentArrayAppend(createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &titleBarButton, (int[]){5,0}, DROPDOWN));
+    setButtonDropdown(compArray.array[0]->element.button, 6);
+    componentArrayAppend(createDropDown((int[]){4, 5}, 2, 5, 43));
+
+    return SDL_APP_CONTINUE;
+}
+
+bool getButtonCollision(SDL_FRect rect, SDL_MouseMotionEvent motion) {
+    float butX = rect.x * SCALE, butY = rect.y * SCALE, butW = rect.w * SCALE, butH = rect.h * SCALE;
+    return (motion.x > butX && motion.x < butX+butW && motion.y > butY && motion.y < butY+butH);
+}
+
+SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
+    if (event->type == SDL_EVENT_QUIT) {
+        return SDL_APP_SUCCESS;
+    } else if (event->type == SDL_EVENT_MOUSE_MOTION) {
+        for(size_t i = 0; i < compArray.used; i++) {
+            if (compArray.array[i]->type != 0) {continue;}
+            Button* button = compArray.array[i]->element.button;
+            if (!button->_.active || button->state == PRESSED) {continue;}
+
+            if (getButtonCollision(button->_.dstRect, event->motion)) {
+                compArray.array[i]->element.button->state = HOVERED;
+            } else {
+                compArray.array[i]->element.button->state = IDLE;
+            }
+        }
+    } else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+        for(size_t i = 0; i < compArray.used; i++) {
+            if (compArray.array[i]->type != 0) {continue;}
+            Button* button = compArray.array[i]->element.button;
+            if (!button->_.active) {continue;}
+
+            if (getButtonCollision(button->_.dstRect, event->motion)) {
+                int callback[2] = {button->callback_data[0], 0};
+
+                if (button->state == HOVERED) {
+                    compArray.array[i]->element.button->state = PRESSED;
+                    callback[1] = 1;
+                } else {
+                    compArray.array[i]->element.button->state = HOVERED;
+                }
+
+                setButtonCallback(button, callback);
+                button->callback(button->callback_data);
+            }
+        }
+    }
+    return SDL_APP_CONTINUE;
+}
+
+static Uint64 prev = 0;
+SDL_AppResult SDL_AppIterate(void *appstate) {   
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    drawGUI();
+    SDL_RenderPresent(renderer);
+
+    //cap the framerate to 30fps
+    Uint64 now = SDL_GetTicksNS();
+    if (SDL_NS_PER_SECOND / FRAMERATE >= now - prev) {
+        SDL_DelayNS((SDL_NS_PER_SECOND / FRAMERATE) - (now - prev));
+    }
+    prev = now;
+
+    return SDL_APP_CONTINUE;
+}
+
+void SDL_AppQuit(void *appstate, SDL_AppResult result) {   
+    cleanupGUI();
+    componentArrayFree();
+}
