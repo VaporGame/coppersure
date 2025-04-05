@@ -33,7 +33,6 @@ void titleBarButton(int* args) {
 void iconButton(int* args) {
     SDL_Log("%d, %d", args[0], args[1]);
 
-    
 }
 
 static bool fullscreen = false;
@@ -87,6 +86,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
 
     //icon buttons
+    //something is wrong here but it looks okay
     createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
     createIconButton((SDL_FRect) {30,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
     createIconButton((SDL_FRect) {48,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
@@ -115,7 +115,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 
     } else if (event->type == SDL_EVENT_MOUSE_MOTION) {
         for(size_t i = 0; i < compArray.used; i++) {
-            if (compArray.array[i]->type != 0) {continue;}
+            if (compArray.array[i]->element.button == NULL) {continue;}
             Button* button = compArray.array[i]->element.button;
             if (!button->_.active || button->state == PRESSED) {continue;}
 
