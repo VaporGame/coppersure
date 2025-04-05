@@ -32,9 +32,28 @@ void titleBarButton(int* args) {
 
 void iconButton(int* args) {
     SDL_Log("%d, %d", args[0], args[1]);
+
+    
 }
 
-/* This function runs once at startup. */
+static bool fullscreen = false;
+
+void dropdownButton(int* args) {
+    if(args[0] == 11) {
+        fullscreen = !fullscreen;
+        SDL_SetWindowFullscreen(window, fullscreen);
+        //TODO: add scaling support
+        // if(fullscreen) {
+        //     int w;
+        //     SDL_GetWindowSize(window, &w, NULL);
+        //     SCALE = (double)w / WINDOW_WIDTH;
+        //     SDL_Log("%f, %d", SCALE, w);
+        // } else {
+        //     SCALE = 1;
+        // }
+    }
+}
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coopersure");
 
@@ -58,7 +77,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         return SDL_APP_FAILURE;
     }
 
-    //SDL_SetWindowFullscreen(window, true);
     SDL_SetRenderScale(renderer, SCALE, SCALE);
     initGUI(renderer, &compArray);
 
@@ -79,8 +97,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
 
     //dropdowns added last because im too lazy to make them layer correctly
     //dropdown buttons
-    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &titleBarButton, (int[]){compArray.used,0}, DROPDOWN);
-    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &titleBarButton, (int[]){compArray.used,0}, DROPDOWN);
+    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN);
+    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN);
     setButtonDropdown(compArray.array[0]->element.button, compArray.used);
     createDropDown((int[]){11, 12}, 2, 5, 43);
     return SDL_APP_CONTINUE;
@@ -94,6 +112,7 @@ bool getButtonCollision(SDL_FRect rect, SDL_MouseMotionEvent motion) {
 SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
     if (event->type == SDL_EVENT_QUIT) {
         return SDL_APP_SUCCESS;
+
     } else if (event->type == SDL_EVENT_MOUSE_MOTION) {
         for(size_t i = 0; i < compArray.used; i++) {
             if (compArray.array[i]->type != 0) {continue;}
@@ -106,6 +125,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
                 compArray.array[i]->element.button->state = IDLE;
             }
         }
+        
     } else if (event->type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
         for(size_t i = 0; i < compArray.used; i++) {
             if (compArray.array[i]->type != 0) {continue;}
@@ -132,13 +152,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 
 static Uint64 prev = 0;
 SDL_AppResult SDL_AppIterate(void *appstate) {   
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
     drawGUI();
     SDL_RenderPresent(renderer);
 
-    //cap the framerate to 30fps
+    //cap the framerate
     Uint64 now = SDL_GetTicksNS();
     if (SDL_NS_PER_SECOND / FRAMERATE >= now - prev) {
         SDL_DelayNS((SDL_NS_PER_SECOND / FRAMERATE) - (now - prev));

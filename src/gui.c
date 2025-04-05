@@ -9,7 +9,7 @@ static SDL_Texture* windowTexture = NULL;
 static SDL_Texture* spriteSheet = NULL;
 static TTF_Font* w95f = NULL;
 
-#define COMPONENTARRAYINITIALSIZE 4
+#define COMPONENTARRAYINITIALSIZE 13
 static ComponentArray* compArray;
 
 static SDL_Color black = {0,0,0,255};
@@ -399,9 +399,8 @@ void componentArrayFree() {
 }
 
 bool componentArrayAppend(GUIElement* element) {
-    if (compArray->used == compArray->len) {
-        //probably dont double the size everytime
-        compArray->len *= 2;
+    if (compArray->used >= compArray->len / 0.7) {
+        compArray->len *= 1.5;
         compArray->array = SDL_realloc(compArray->array, compArray->len * sizeof(GUIElement));
         if (compArray->array == NULL) {
             componentArrayFree(compArray);

@@ -6,7 +6,8 @@
 #include <stddef.h>
 #include <assert.h>
 
-#define INITIAL_CACHE_CAPACITY 8
+#define INITIAL_CACHE_CAPACITY 13
+#define LOAD_FACTOR 7
 
 struct Cache {
     CacheEntry* entries;
@@ -117,15 +118,12 @@ static const char* cacheSetEntry(CacheEntry* entries, size_t capacity, const cha
 }
 
 static bool cacheExpand(Cache* cache) {
-    size_t new_cap = cache->capacity * 2;
-    if (new_cap < cache->capacity) {
-        return false; //overflow
-    }
+    size_t new_cap = cache->capacity * 1.5;
+    SDL_Log("%ld", new_cap);
+    if (new_cap < cache->capacity) {return false;} //overflow
 
     CacheEntry* newEntries = calloc(new_cap, sizeof(CacheEntry));
-    if (newEntries == NULL) {
-        return false;
-    }
+    if (newEntries == NULL) {return false;}
 
     for(size_t i = 0; i < cache->capacity; i++) {
         CacheEntry entry = cache->entries[i];
@@ -144,8 +142,8 @@ const char* cacheSet(Cache* cache, const char* key, void* value) {
     if (value == NULL) {
         return NULL;
     }
-
-    if (cache->length >= cache->capacity / 2) {
+    if (cache->length >= (cache->capacity * LOAD_FACTOR) / 10) {
+        SDL_Log("expanding cache");
         if (!cacheExpand(cache)) {
             return NULL;
         }
@@ -164,6 +162,7 @@ CacheIterator newCacheIterator(Cache* cache) {
     it.index = 0;
     return it;
 }
+
 bool cacheIteratorNext(CacheIterator* iterator) {
     Cache* cache = iterator->cache;
     while(iterator->index < cache->capacity) {
