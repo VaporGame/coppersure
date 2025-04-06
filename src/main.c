@@ -64,7 +64,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     
     SDL_WindowFlags windowFlags = SDL_WINDOW_BORDERLESS;
     for(int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
-        if(SDL_strcmp("vulkan", SDL_GetRenderDriver(i))) {
+        if(SDL_strcmp("vulkan", SDL_GetRenderDriver(i)) == 0) {
             windowFlags = windowFlags | SDL_WINDOW_VULKAN;
         }
     }
