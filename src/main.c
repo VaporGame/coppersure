@@ -17,7 +17,9 @@ static float SCALE = 1.0f;
 static ComponentArray compArray;
 
 SDL_HitTestResult hitTestCallback(SDL_Window *window, const SDL_Point *area, void*data) {
-    if (area->y <= 20) {
+    if (area->x > 619 && area->x < 635 && area->y > 5 && area->y < 19) {
+        return SDL_HITTEST_NORMAL;
+    } else if (area->y <= 21) {
         return SDL_HITTEST_DRAGGABLE;
     }
     return SDL_HITTEST_NORMAL;
@@ -153,6 +155,13 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
             if (compArray.array[i]->type != 0) {continue;}
             Button* button = compArray.array[i]->element.button;
             if (!button->_.active) {continue;}
+
+            if(event->motion.x > 619 && event->motion.x < 635 && event->motion.y > 5 && event->motion.y < 19) {
+                SDL_Event quit;
+                SDL_zero(quit);
+                quit.type = SDL_EVENT_QUIT;
+                SDL_PushEvent(&quit);
+            }
 
             if (getButtonCollision(button->_.dstRect, event->motion)) {
                 int callback[2] = {button->callback_data[0], 0};
