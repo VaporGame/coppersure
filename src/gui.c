@@ -233,18 +233,11 @@ void drawGUI() {
 }
 
 static TextureCacheEntry* createText(const char* string, SDL_Color color, int size) {
-    // char key[strlen(string) + 3];
     char *key = NULL;
-    //strcpy(key, string);
-    //char str[1] = "s";
-    //char cStr[3] = {(char)color.r,(char)color.g,(char)color.b,};
-    // strcat(key, cStr);
     SDL_asprintf(&key, "%s%c", string, (char)color.r);
     TextureCacheEntry* cachedTexture = cacheGet(textCache, key);
-    //TextureCacheEntry* cachedTexture = cacheGet(textCache, string);
 
     if (cachedTexture != NULL) {
-        //SDL_Log("loading texture: %s", key);
         SDL_free(key);
         return cachedTexture;
     } 
@@ -261,10 +254,8 @@ static TextureCacheEntry* createText(const char* string, SDL_Color color, int si
     test->w = w;
     test->h = h;
     test->texture = texture;
-    //char* key2 = SDL_malloc(sizeof(string) + 2);
     cacheSet(textCache, key, test);
     SDL_free(key);
-    //cacheSet(textCache, string, test);
     return test;
 }
 
