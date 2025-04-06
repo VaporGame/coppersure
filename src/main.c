@@ -16,6 +16,13 @@ static float SCALE = 1.0f;
 
 static ComponentArray compArray;
 
+SDL_HitTestResult hitTestCallback(SDL_Window *window, const SDL_Point *area, void*data) {
+    if (area->y <= 20) {
+        return SDL_HITTEST_DRAGGABLE;
+    }
+    return SDL_HITTEST_NORMAL;
+}
+
 void titleBarButton(int* args) {
     //SDL_Log("%d, %d", args[0], args[1]);
 
@@ -73,6 +80,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
+
+    SDL_SetWindowHitTest(window, hitTestCallback, NULL);
 
     if (!SDL_SetWindowResizable(window, false)) {
         SDL_Log("error setting resize %s", SDL_GetError());
