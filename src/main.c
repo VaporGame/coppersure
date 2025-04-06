@@ -39,7 +39,7 @@ static bool fullscreen = false;
 static float prevScale;
 
 void dropdownButton(int* args) {
-    if(args[0] == 11) {
+    if(args[0] == 11) { //fullscreen button
         fullscreen = !fullscreen;
         SDL_SetWindowFullscreen(window, fullscreen);
         if(fullscreen) {
@@ -55,7 +55,7 @@ void dropdownButton(int* args) {
 }
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
-    SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coopersure");
+    SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coppersure");
 
     if (!SDL_Init(SDL_INIT_VIDEO)) {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
@@ -72,6 +72,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         return SDL_APP_FAILURE;
     }  
     
+    if (!SDL_SetWindowBordered(window, false)) {
+        SDL_Log("error setting bordered %s", SDL_GetError());
+        return SDL_APP_FAILURE;
+    }  
+
     if (!TTF_Init()) {
         SDL_Log("TTF_Init Error: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -81,10 +86,10 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     initGUI(renderer, &compArray);
 
     //add title bar buttons
-    createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
-    createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
-    createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
-    createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR);
+    createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
 
     //icon buttons
     //something is wrong here but it looks okay
@@ -98,8 +103,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
 
     //dropdowns added last because im too lazy to make them layer correctly
     //dropdown buttons
-    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN);
-    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN);
+    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, true);
+    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, false);
     setButtonDropdown(compArray.array[0]->element.button, compArray.used);
     createDropDown((int[]){11, 12}, 2, 5, 43);
     return SDL_APP_CONTINUE;
@@ -151,7 +156,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
         for(size_t i = 0; i < compArray.used; i++) {
             if (compArray.array[i]->type != 0) {continue;}
             Button* button = compArray.array[i]->element.button;
-            if (!button->_.active || button->style != ICON) {continue;}
+            if (!button->_.active || button->toggle) {continue;}
             
             if(button->state == PRESSED) {
                 

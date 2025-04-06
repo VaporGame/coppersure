@@ -287,6 +287,7 @@ GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback
     Button* button = SDL_malloc(sizeof(Button));
 
     button->_.dstRect = rect;
+    button->toggle = false;
     button->_.dstRect.w = button->_.dstRect.h = 16;
     button->clipRect=clipRect;
     button->callback = callback;
@@ -308,10 +309,11 @@ GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback
     return elem;
 }
 
-GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style) {
+GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle) {
     Button* button = SDL_malloc(sizeof(Button));
 
     button->text = text;
+    button->toggle = toggle;
     if(style == DROPDOWN) {
         button->_.dstRect = (SDL_FRect) {rect.x, rect.y, getTextSize(text, 12).w + 38, 17};
     } else {

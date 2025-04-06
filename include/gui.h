@@ -23,6 +23,7 @@ typedef struct {
     void (*callback)(int* data);
     int *callback_data;
     int dropdownIdx;
+    bool toggle;
 } Button;
 
 typedef struct {
@@ -60,7 +61,7 @@ int drawTextBold(const char* string, SDL_Color color, int x, int y, int size);
 SDL_FRect getTextSize(const char* string, int size);
 
 GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
-GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style);
+GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle);
 void setButtonDropdown(Button* button, int idx);
 void setButtonCallback(Button* buton, int* data);
 GUIElement* createDropDown(const int* buttons, size_t size, int x, int y);
