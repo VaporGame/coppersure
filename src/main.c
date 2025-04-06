@@ -63,6 +63,31 @@ void dropdownButton(int* args) {
     }
 }
 
+void createGUIButtons() {
+    //add title bar buttons
+    createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+
+    //icon buttons
+    //something is wrong here but it looks okay
+    createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {31,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {49,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {80,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {97,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {116,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {146,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
+
+    //dropdowns added last because im too lazy to make them layer correctly
+    //dropdown buttons
+    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, true);
+    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, false);
+    setButtonDropdown(compArray.array[0]->element.button, compArray.used);
+    createDropDown((int[]){11, 12}, 2, 5, 43);
+}
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coppersure");
 
@@ -103,28 +128,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetRenderScale(renderer, SCALE, SCALE);
     initGUI(renderer, &compArray);
 
-    //add title bar buttons
-    createTextButton("File",(SDL_FRect) {2,21,32,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
-    createTextButton("Edit",(SDL_FRect) {36,21,29,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
-    createTextButton("View",(SDL_FRect) {71,21,39,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
-    createTextButton("Help",(SDL_FRect) {114,21,34,20}, &titleBarButton, (int[]){compArray.used,0}, TITLEBAR, true);
+    createGUIButtons();
 
-    //icon buttons
-    //something is wrong here but it looks okay
-    createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {31,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {49,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {80,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {97,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {116,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {146,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
-
-    //dropdowns added last because im too lazy to make them layer correctly
-    //dropdown buttons
-    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, true);
-    createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, false);
-    setButtonDropdown(compArray.array[0]->element.button, compArray.used);
-    createDropDown((int[]){11, 12}, 2, 5, 43);
     return SDL_APP_CONTINUE;
 }
 
