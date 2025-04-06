@@ -36,20 +36,21 @@ void iconButton(int* args) {
 }
 
 static bool fullscreen = false;
+static float prevScale;
 
 void dropdownButton(int* args) {
     if(args[0] == 11) {
         fullscreen = !fullscreen;
         SDL_SetWindowFullscreen(window, fullscreen);
-        //TODO: add scaling support
-        // if(fullscreen) {
-        //     int w;
-        //     SDL_GetWindowSize(window, &w, NULL);
-        //     SCALE = (double)w / WINDOW_WIDTH;
-        //     SDL_Log("%f, %d", SCALE, w);
-        // } else {
-        //     SCALE = 1;
-        // }
+        if(fullscreen) {
+            SDL_Rect dispBounds = getFullscreenResolution(window);
+            prevScale = SCALE;
+            SCALE = dispBounds.w / (float)WINDOW_WIDTH + 0.001f; //slightly fixes artifacts on non integer resolutions
+        } else {
+            SCALE = prevScale;
+            SDL_SetWindowSize(window, WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE);
+        }
+        SDL_SetRenderScale(renderer, SCALE, SCALE);
     }
 }
 
@@ -75,7 +76,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         SDL_Log("TTF_Init Error: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
-
+    
     SDL_SetRenderScale(renderer, SCALE, SCALE);
     initGUI(renderer, &compArray);
 

@@ -406,3 +406,10 @@ bool componentArrayAppend(GUIElement* element) {
     compArray->array[compArray->used++] = element;
     return true;
 }
+
+SDL_Rect getFullscreenResolution(SDL_Window* window) {
+    SDL_DisplayID displayID = SDL_GetDisplayForWindow(window);
+    SDL_Rect bounds;
+    SDL_GetDisplayBounds(displayID, &bounds);
+    return bounds;
+}

@@ -70,4 +70,6 @@ GUIElement* createDropDown(const int* buttons, size_t size, int x, int y);
 void componentArrayFree();
 bool componentArrayAppend(GUIElement* element);
 
+SDL_Rect getFullscreenResolution(SDL_Window* window);
+
 #endif
