@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(game)
 
+set(CMAKE_C_STANDARD 23)
+
 # set the output directory for built objects.
 # This makes sure that the dynamic library goes into the build directory automatically.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")

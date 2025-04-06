@@ -87,7 +87,7 @@ static bool drawButton(Button* button, int max) {
     SDL_FRect dstRect = button->_.dstRect;
     SDL_FRect bg;
     if(button->style != ICON) {
-        bg = (SDL_FRect){dstRect.x + 2, dstRect.y + 1, getTextSize(button->text, 12).w + 13};
+        bg = (SDL_FRect){dstRect.x + 2, dstRect.y + 1, getTextSize(button->text, 12).w + 13, 17};
     } else {
         bg = (SDL_FRect){dstRect.x, dstRect.y, 16, 16};
     }
@@ -397,7 +397,7 @@ bool componentArrayAppend(GUIElement* element) {
         compArray->len *= 1.5;
         compArray->array = SDL_realloc(compArray->array, compArray->len * sizeof(GUIElement));
         if (compArray->array == NULL) {
-            componentArrayFree(compArray);
+            componentArrayFree();
             SDL_Log("Error reallocating component array");
             return false;
         }

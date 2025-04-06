@@ -88,12 +88,12 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     //icon buttons
     //something is wrong here but it looks okay
     createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {30,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {48,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {79,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {96,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {115,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {147,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {31,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {49,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {80,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {97,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {116,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton((SDL_FRect) {146,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
 
     //dropdowns added last because im too lazy to make them layer correctly
     //dropdown buttons
@@ -120,9 +120,9 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
             if (!button->_.active || button->state == PRESSED) {continue;}
 
             if (getButtonCollision(button->_.dstRect, event->motion)) {
-                compArray.array[i]->element.button->state = HOVERED;
+                button->state = HOVERED;
             } else {
-                compArray.array[i]->element.button->state = IDLE;
+                button->state = IDLE;
             }
         }
         
@@ -134,14 +134,28 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 
             if (getButtonCollision(button->_.dstRect, event->motion)) {
                 int callback[2] = {button->callback_data[0], 0};
-
+                
                 if (button->state == HOVERED) {
-                    compArray.array[i]->element.button->state = PRESSED;
+                    button->state = PRESSED;
                     callback[1] = 1;
                 } else {
-                    compArray.array[i]->element.button->state = HOVERED;
+                    button->state = HOVERED;
                 }
 
+                setButtonCallback(button, callback);
+                button->callback(button->callback_data);
+            }
+        }
+    } else if (event->type == SDL_EVENT_MOUSE_BUTTON_UP) {
+        for(size_t i = 0; i < compArray.used; i++) {
+            if (compArray.array[i]->type != 0) {continue;}
+            Button* button = compArray.array[i]->element.button;
+            if (!button->_.active || button->style != ICON) {continue;}
+            
+            if(button->state == PRESSED) {
+                
+                button->state = HOVERED;
+                int callback[2] = {button->callback_data[0], 0};
                 setButtonCallback(button, callback);
                 button->callback(button->callback_data);
             }
