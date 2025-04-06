@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "hashmap.h"
+#include <string.h>
 
 Cache* textCache = NULL;
 
