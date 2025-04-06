@@ -233,7 +233,8 @@ void drawGUI() {
 }
 
 static TextureCacheEntry* createText(const char* string, SDL_Color color, int size) {
-    char key[strlen(string) + 3];
+    // char key[strlen(string) + 3];
+    char *key = SDL_malloc(strlen(string) + 3);
     strcpy(key, string);
     //char str[1] = "s";
     char cStr[3] = {(char)color.r,(char)color.g,(char)color.b,};
