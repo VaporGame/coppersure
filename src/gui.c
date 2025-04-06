@@ -87,7 +87,7 @@ static bool drawButton(Button* button, int max) {
     SDL_FRect dstRect = button->_.dstRect;
     SDL_FRect bg;
     if(button->style != ICON) {
-        bg = (SDL_FRect){dstRect.x + 2, dstRect.y + 1, getTextSize(button->text, 12).w + 13, 17};
+        bg = (SDL_FRect){dstRect.x + 2, dstRect.y + 1, getTextSize(button->text, 12).w + 13, 18};
     } else {
         bg = (SDL_FRect){dstRect.x, dstRect.y, 16, 16};
     }

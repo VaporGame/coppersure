@@ -116,7 +116,7 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event) {
 
     } else if (event->type == SDL_EVENT_MOUSE_MOTION) {
         for(size_t i = 0; i < compArray.used; i++) {
-            if (compArray.array[i]->element.button == NULL) {continue;}
+            if (compArray.array[i]->type != 0) {continue;}
             Button* button = compArray.array[i]->element.button;
             if (!button->_.active || button->state == PRESSED) {continue;}
 
