@@ -65,7 +65,7 @@ void freeTextureCache(Cache* cache) {
             }
             free(test);
         }
-        free((void*)cache->entries[i].key);
+        free((void *)cache->entries[i].key);
     }
 
     free(cache->entries);
