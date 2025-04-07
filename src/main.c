@@ -25,7 +25,7 @@ SDL_HitTestResult hitTestCallback(SDL_Window *window, const SDL_Point *area, voi
     return SDL_HITTEST_NORMAL;
 }
 
-void titleBarButton(int* args) {
+void titleBarButton(int* args) { //this is okay since all titlebar buttons have dropdowns
     //SDL_Log("%d, %d", args[0], args[1]);
 
     int dropdownIdx = compArray.array[args[0]]->element.button->dropdownIdx;
@@ -39,7 +39,7 @@ void titleBarButton(int* args) {
     }
 }
 
-void iconButton(int* args) {
+void iconButton(int* args) { //the point of callbacks is to have a function for each button. Only generalize functions if behaviors are very similar
     SDL_Log("%d, %d", args[0], args[1]);
 
 }
@@ -47,20 +47,22 @@ void iconButton(int* args) {
 static bool fullscreen = false;
 static float prevScale;
 
-void dropdownButton(int* args) {
-    if(args[0] == 11) { //fullscreen button
-        fullscreen = !fullscreen;
-        SDL_SetWindowFullscreen(window, fullscreen);
-        if(fullscreen) {
-            SDL_Rect dispBounds = getFullscreenResolution(window);
-            prevScale = SCALE;
-            SCALE = dispBounds.w / (float)WINDOW_WIDTH + 0.001f; //slightly fixes artifacts on non integer resolutions
-        } else {
-            SCALE = prevScale;
-            SDL_SetWindowSize(window, WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE);
-        }
-        SDL_SetRenderScale(renderer, SCALE, SCALE);
+void dropdownButton(int* args) { //the point of callbacks is to have a function for each button. Only generalize functions if behaviors are very similar
+    //do we put shit here
+}
+
+void setFullscreen(int* args) {
+    fullscreen = !fullscreen;
+    SDL_SetWindowFullscreen(window, fullscreen);
+    if(fullscreen) {
+        SDL_Rect dispBounds = getFullscreenResolution(window);
+        prevScale = SCALE;
+        SCALE = dispBounds.w / (float)WINDOW_WIDTH + 0.001f; //slightly fixes artifacts on non integer resolutions
+    } else {
+        SCALE = prevScale;
+        SDL_SetWindowSize(window, WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE);
     }
+    SDL_SetRenderScale(renderer, SCALE, SCALE);
 }
 
 void createGUIButtons() {
@@ -72,6 +74,7 @@ void createGUIButtons() {
 
     //icon buttons
     //something is wrong here but it looks okay
+    //replace the callbacks to iconButton with specific functions that handles each buttons behavior (eg save, copy, paste)
     createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
     createIconButton((SDL_FRect) {31,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
     createIconButton((SDL_FRect) {49,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
@@ -82,7 +85,7 @@ void createGUIButtons() {
 
     //dropdowns added last because im too lazy to make them layer correctly
     //dropdown buttons
-    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, true);
+    createTextButton("Fullscreen",(SDL_FRect) {5,44,32,20}, &setFullscreen, (int[]){compArray.used,0}, DROPDOWN, true);
     createTextButton("Resolution",(SDL_FRect) {5,61,32,20}, &dropdownButton, (int[]){compArray.used,0}, DROPDOWN, false);
     setButtonDropdown(compArray.array[0]->element.button, compArray.used);
     createDropDown((int[]){11, 12}, 2, 5, 43);

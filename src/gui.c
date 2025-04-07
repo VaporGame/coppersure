@@ -283,7 +283,7 @@ SDL_FRect getTextSize(const char* string, int size) {
     return (SDL_FRect) {0,0,entry->w,entry->h};
 }
 
-GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data) {
+int createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data) {
     Button* button = SDL_malloc(sizeof(Button));
 
     button->_.dstRect = rect;
@@ -298,7 +298,8 @@ GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback
     button->callback_data = SDL_malloc(dataSize);
     if(button->callback_data == NULL) {
         SDL_Log("Error allocating memory for button callback data");
-        return NULL;
+        SDL_free(button);
+        return -1;
     }
     memcpy(button->callback_data, data, dataSize);
 
@@ -306,10 +307,10 @@ GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback
     elem->type = 0;
     elem->element.button = button;
     componentArrayAppend(elem);
-    return elem;
+    return compArray->used;
 }
 
-GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle) {
+int createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle) {
     Button* button = SDL_malloc(sizeof(Button));
 
     button->text = text;
@@ -327,7 +328,8 @@ GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* d
     button->callback_data = SDL_malloc(dataSize);
     if(button->callback_data == NULL) {
         SDL_Log("Error allocating memory for button callback data");
-        return NULL;
+        SDL_free(button);
+        return -1;
     }
     memcpy(button->callback_data, data, dataSize);
     button->dropdownIdx = -1;
@@ -336,7 +338,7 @@ GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* d
     elem->type = 0;
     elem->element.button = button;
     componentArrayAppend(elem);
-    return elem;
+    return compArray->used;
 }
 
 void setButtonDropdown(Button* button, int idx) {
@@ -347,7 +349,7 @@ void setButtonCallback(Button* button, int* data) {
     memcpy(button->callback_data, data, sizeof(int) * 2);
 }
 
-GUIElement* createDropDown(const int *buttons, size_t size, int x, int y) {
+int createDropDown(const int *buttons, size_t size, int x, int y) {
     Dropdown* dropdown = SDL_malloc(sizeof(Dropdown));
     dropdown->_.active = false;
     dropdown->_.dstRect.x = x;
@@ -371,7 +373,7 @@ GUIElement* createDropDown(const int *buttons, size_t size, int x, int y) {
     elem->type = 1;
     elem->element.dropdown = dropdown;
     componentArrayAppend(elem);
-    return elem;
+    return compArray->used;
 }
 
 void componentArrayFree() {

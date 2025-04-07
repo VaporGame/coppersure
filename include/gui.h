@@ -60,11 +60,11 @@ int drawTextBold(const char* string, SDL_Color color, int x, int y, int size);
 // int drawTextWrapped(char* string, SDL_Color color, int x, int y, int size, int wrapLength);
 SDL_FRect getTextSize(const char* string, int size);
 
-GUIElement* createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
-GUIElement* createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle);
+int createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
+int createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle);
 void setButtonDropdown(Button* button, int idx);
 void setButtonCallback(Button* buton, int* data);
-GUIElement* createDropDown(const int* buttons, size_t size, int x, int y);
+int createDropDown(const int* buttons, size_t size, int x, int y);
 // bool drawButton(Button* button);
 
 // void componentArrayInit(size_t initialSize);
