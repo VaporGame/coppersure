@@ -391,7 +391,7 @@ void componentArrayFree() {
 }
 
 bool componentArrayAppend(GUIElement* element) {
-    if (compArray->used >= compArray->len / 0.7) {
+    if (compArray->used >= compArray->len * 0.7) {
         compArray->len *= 1.5;
         compArray->array = SDL_realloc(compArray->array, compArray->len * sizeof(GUIElement));
         if (compArray->array == NULL) {
