@@ -14,7 +14,7 @@ static SDL_Renderer *renderer = NULL;
 
 static float SCALE = 1.0f;
 
-static ComponentArray compArray;
+static GUIComponentArray compArray;
 
 SDL_HitTestResult hitTestCallback(SDL_Window *window, const SDL_Point *area, void*data) {
     if (area->x > 619 && area->x < 635 && area->y > 5 && area->y < 19) {

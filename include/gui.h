@@ -2,11 +2,7 @@
 #define GUI_H
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
-
-typedef struct {
-    bool active;
-    SDL_FRect dstRect;
-} Component;
+#include "component.h"
 
 typedef enum {
     TITLEBAR,
@@ -45,9 +41,9 @@ typedef struct {
 typedef struct {
     size_t used, len;
     GUIElement** array;
-} ComponentArray;
+} GUIComponentArray;
 
-void initGUI(SDL_Renderer* renderer, ComponentArray* componentArray);
+void initGUI(SDL_Renderer* renderer, GUIComponentArray* componentArray);
 void cleanupGUI();
 
 void drawGUI();

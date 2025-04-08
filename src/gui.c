@@ -11,7 +11,7 @@ static SDL_Texture* spriteSheet = NULL;
 static TTF_Font* w95f = NULL;
 
 #define COMPONENT_ARRAY_INITIAL_SIZE 13
-static ComponentArray* compArray;
+static GUIComponentArray* compArray;
 
 static SDL_Color black = {0,0,0,255};
 // static SDL_Color darkGray = {128,128,128,255};
@@ -47,7 +47,7 @@ static SDL_Texture* bmpToTexture(char* name) {
     return texture;
 }
 
-void initGUI(SDL_Renderer* render, ComponentArray* componentArray) {
+void initGUI(SDL_Renderer* render, GUIComponentArray* componentArray) {
     textCache = createCache();
     compArray = componentArray;
 
