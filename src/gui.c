@@ -283,10 +283,11 @@ SDL_FRect getTextSize(const char* string, int size) {
     return (SDL_FRect) {0,0,entry->w,entry->h};
 }
 
-int createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data) {
+int createIconButton(int x, int y, SDL_FRect clipRect, void (*callback)(int* data), int* data) {
     Button* button = SDL_malloc(sizeof(Button));
 
-    button->_.dstRect = rect;
+    SDL_FRect pos = {x, y, 0, 0};
+    button->_.dstRect = pos;
     button->toggle = false;
     button->_.dstRect.w = button->_.dstRect.h = 16;
     button->clipRect=clipRect;

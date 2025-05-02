@@ -75,13 +75,13 @@ void createGUIButtons() {
     //icon buttons
     //something is wrong here but it looks okay
     //replace the callbacks to iconButton with specific functions that handles each buttons behavior (eg save, copy, paste)
-    createIconButton((SDL_FRect) {14,46,0,0}, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {31,46,0,0}, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {49,46,0,0}, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {80,46,0,0}, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {97,46,0,0}, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {116,46,0,0}, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
-    createIconButton((SDL_FRect) {146,46,0,0}, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(14,46, (SDL_FRect) {0,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(31,46, (SDL_FRect) {16,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(49,46, (SDL_FRect) {32,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(80,46, (SDL_FRect) {48,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(97,46, (SDL_FRect) {64,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(116,46, (SDL_FRect) {80,0,16,16}, &iconButton, (int[]){compArray.used,0});
+    createIconButton(146,46, (SDL_FRect) {94,0,16,16}, &iconButton, (int[]){compArray.used,0});
 
     //dropdowns added last because im too lazy to make them layer correctly
     //dropdown buttons

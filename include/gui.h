@@ -56,7 +56,8 @@ int drawTextBold(const char* string, SDL_Color color, int x, int y, int size);
 // int drawTextWrapped(char* string, SDL_Color color, int x, int y, int size, int wrapLength);
 SDL_FRect getTextSize(const char* string, int size);
 
-int createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
+// int createIconButton(SDL_FRect rect, SDL_FRect clipRect, void (*callback)(int* data), int* data);
+int createIconButton(int x, int y, SDL_FRect clipRect, void (*callback)(int* data), int* data);
 int createTextButton(char* text, SDL_FRect rect, void (*callback)(int* data), int* data, ButtonStyle style, bool toggle);
 void setButtonDropdown(Button* button, int idx);
 void setButtonCallback(Button* buton, int* data);
