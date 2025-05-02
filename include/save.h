@@ -7,6 +7,6 @@ typedef struct {
     float position[2];
     float rotation;
     uint8_t state;
-} 
+} SaveComponent; 
 
 #endif
