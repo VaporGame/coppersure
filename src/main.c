@@ -101,7 +101,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     
     SDL_WindowFlags windowFlags = SDL_WINDOW_BORDERLESS;
     
-#if !defined(__APPLE__) && !defined(__OSX__) && !defined(__APPLE_CC__)
+#if !defined(__APPLE__) && !defined(__OSX__) && !defined(__APPLE_CC__) // Vulkan is not supported on macOS; skip Vulkan-specific logic on Apple platforms.
     
     for(int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
         if(SDL_strcmp("vulkan", SDL_GetRenderDriver(i)) == 0) {
