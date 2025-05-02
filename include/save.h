@@ -5,17 +5,17 @@
 #define SAVEFILE_VERSION 1
 
 typedef struct {
-    int version;
-    SaveComponent* components;
-} SaveFile;
-
-typedef struct {
     uint8_t type;
     float position[2];
     float rotation;
     uint8_t state;
     void (*params)(int* data);
 } SaveComponent; 
+
+typedef struct {
+    int version;
+    SaveComponent* components;
+} SaveFile;
 
 SaveFile* loadSavefile(char* filename);
 int writeSavefile(char* filename, SaveFile* data);
