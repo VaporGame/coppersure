@@ -1,6 +1,7 @@
 #ifndef SAVE_H
 #define SAVE_H
 #include <stdint.h>
+#include <unistd.h>
 
 #define SAVEFILE_VERSION 1
 

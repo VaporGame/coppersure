@@ -4,6 +4,7 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include "gui.h"
+#include "save.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 360
@@ -91,6 +92,8 @@ void createGUIButtons() {
     createDropDown((int[]){11, 12}, 2, 5, 43);
 }
 
+SaveFile *savefile = NULL;
+
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coppersure");
 
@@ -132,6 +135,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     initGUI(renderer, &compArray);
 
     createGUIButtons();
+
+    //test savefile
+    savefile = SDL_malloc(sizeof(SaveFile));
+    savefile->version = 1;
+    savefile->components = NULL;
+    writeSavefile("savefile", savefile);
+    loadSavefile("savefile");
 
     return SDL_APP_CONTINUE;
 }
@@ -224,4 +234,5 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {   
     cleanupGUI();
     componentArrayFree();
+    closeSavefile(savefile);
 }
