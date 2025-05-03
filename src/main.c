@@ -92,7 +92,7 @@ void createGUIButtons() {
     createDropDown((int[]){11, 12}, 2, 5, 43);
 }
 
-SaveFile *savefile = NULL;
+// SaveFile *savefile = NULL;
 
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     SDL_SetAppMetadata("coppersure", "1.0", "com.vaporgame.coppersure");
@@ -104,15 +104,13 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     
     SDL_WindowFlags windowFlags = SDL_WINDOW_BORDERLESS;
     
-#if !defined(__APPLE__) && !defined(__OSX__) && !defined(__APPLE_CC__) // Vulkan is not supported on macOS; skip Vulkan-specific logic on Apple platforms.
-    
-    for(int i = 0; i < SDL_GetNumRenderDrivers(); i++) {
-        if(SDL_strcmp("vulkan", SDL_GetRenderDriver(i)) == 0) {
-            windowFlags = windowFlags | SDL_WINDOW_VULKAN;
+    #if !defined(__APPLE__) && !defined(__OSX__) && !defined(__APPLE_CC__) // Vulkan is not supported on macOS
+        for(int i = 0; i < SDL_GetNumRenderDrivers(); i++) { //use Vulkan by default
+            if(SDL_strcmp("vulkan", SDL_GetRenderDriver(i)) == 0) {
+                windowFlags = windowFlags | SDL_WINDOW_VULKAN;
+            }
         }
-    }
-    
-#endif
+    #endif
 
     if (!SDL_CreateWindowAndRenderer("coppersure", WINDOW_WIDTH*SCALE, WINDOW_HEIGHT*SCALE, windowFlags, &window, &renderer)) {
         SDL_Log("Couldn't create window/renderer: %s", SDL_GetError());
@@ -125,11 +123,6 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
         SDL_Log("error setting resize %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }  
-    
-    // if (!SDL_SetWindowBordered(window, false)) {
-    //     SDL_Log("error setting bordered %s", SDL_GetError());
-    //     return SDL_APP_FAILURE;
-    // }  
 
     if (!TTF_Init()) {
         SDL_Log("TTF_Init Error: %s", SDL_GetError());
@@ -142,11 +135,11 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[]) {
     createGUIButtons();
 
     //test savefile
-    savefile = SDL_malloc(sizeof(SaveFile));
-    savefile->version = 1;
-    savefile->components = NULL;
-    writeSavefile("savefile", savefile);
-    loadSavefile("savefile");
+    // savefile = SDL_malloc(sizeof(SaveFile));
+    // savefile->version = 1;
+    // savefile->components = NULL;
+    // writeSavefile("savefile", savefile);
+    // loadSavefile("savefile");
 
     return SDL_APP_CONTINUE;
 }
@@ -239,5 +232,5 @@ SDL_AppResult SDL_AppIterate(void *appstate) {
 void SDL_AppQuit(void *appstate, SDL_AppResult result) {   
     cleanupGUI();
     componentArrayFree();
-    closeSavefile(savefile);
+    // closeSavefile(savefile);
 }

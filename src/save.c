@@ -7,92 +7,95 @@
 
 //TODO: implement exporting and importing YAML in the future
 
-static char *getDocumentsPath() { //this is probably bad
-    #ifdef _WIN32
-        const char *username = getenv("USERNAME");
-    #else
-        const char *username = getenv("USER");
-    #endif 
+//this is all very bad
+//TODO: fix this after implementing level format.
 
-    char *path = NULL;
+// static char *getSavefilePath() { //this is probably bad
+//     #ifdef _WIN32
+//         const char *username = getenv("USERNAME");
+//     #else
+//         const char *username = getenv("USER");
+//     #endif 
 
-    #ifdef _WIN32
-        asprintf(&path, "%s%s%s", "C:\\Users\\", username, "\\Documents\\coppersure\\");
-    #elif defined(__APPLE__)
-        asprintf(&path, "%s%s%s", "/Users/", username, "/Documents/coppersure/");
-    #else // Linux and other Unix-like systems
-        asprintf(&path, "%s%s%s", "/home/", username, "/Documents/coppersure/");
-    #endif
+//     char *path = NULL;
 
-    if(path == NULL) {
-        printf("Error getting Documents directory\n");
-        return NULL;
-    }
+//     #ifdef _WIN32
+//         asprintf(&path, "%s%s%s", "C:\\Users\\", username, "\\Documents\\coppersure\\");
+//     #elif defined(__APPLE__)
+//         asprintf(&path, "%s%s%s", "/Users/", username, "/Documents/coppersure/");
+//     #else // Linux and other Unix-like systems
+//         asprintf(&path, "%s%s%s", "/home/", username, "/Documents/coppersure/");
+//     #endif
 
-    DIR* dir = opendir(path);
-    if(dir) {
-        closedir(dir);
-    } else if(ENOENT == errno) {
-        mkdir(path, 0700); //not sure if this works on windows
-    } else {
-        printf("What the fuck did you do");
-        return NULL;
-    }
+//     if(path == NULL) {
+//         printf("Error getting Documents directory\n");
+//         return NULL;
+//     }
 
-    return path;
-}
+//     DIR* dir = opendir(path);
+//     if(dir) {
+//         closedir(dir);
+//     } else if(ENOENT == errno) {
+//         mkdir(path, 0700);
+//     } else {
+//         printf("What the fuck did you do");
+//         return NULL;
+//     }
 
-static char* DocumentsPath = NULL;
+//     return path;
+// }
 
-SaveFile* loadSavefile(char* filename) {
-    if(DocumentsPath == NULL) {
-        DocumentsPath = getDocumentsPath();
-    }
+// static char* DocumentsPath = NULL;
 
-    char* path = NULL;
-    asprintf(&path, "%s%s", DocumentsPath, filename);
+// SaveFile* loadSavefile(char* filename) {
+//     if(DocumentsPath == NULL) {
+//         DocumentsPath = getSavefilePath();
+//     }
 
-    FILE *save = fopen(path, "rb");
-    if(save == NULL) {
-        printf("Failed to open savefile: %s when reading\n", path);
-        return NULL;
-    }
+//     char* path = NULL;
+//     asprintf(&path, "%s%s", DocumentsPath, filename);
 
-    SaveFile* saveFile = malloc(sizeof(SaveFile));
+//     FILE *save = fopen(path, "rb");
+//     if(save == NULL) {
+//         printf("Failed to open savefile: %s when reading\n", path);
+//         return NULL;
+//     }
 
-    size_t bytesRead = fread(saveFile, sizeof(SaveFile), 1, save);
-    fclose(save);
-    if(bytesRead != 1) {
-        printf("Error reading from file: %s\n", path);
-        return NULL;
-    }
-    return saveFile;
-}
+//     SaveFile* saveFile = malloc(sizeof(SaveFile));
 
-int writeSavefile(char* filename, SaveFile* data) {
-    if(DocumentsPath == NULL) {
-        DocumentsPath = getDocumentsPath();
-    }
+//     size_t bytesRead = fread(saveFile, sizeof(SaveFile), 1, save);
+//     fclose(save);
+//     if(bytesRead != 1) {
+//         printf("Error reading from file: %s\n", path);
+//         return NULL;
+//     }
+//     return saveFile;
+// }
 
-    char* path = NULL;
-    asprintf(&path, "%s%s", DocumentsPath, filename);
+// int writeSavefile(char* filename, SaveFile* data) {
+//     if(DocumentsPath == NULL) {
+//         DocumentsPath = getSavefilePath();
+//     }
 
-    FILE *save = fopen(path, "wb");
-    if(save == NULL) {
-        printf("Failed to open savefile: %s when writing\n", path);
-        return 1;
-    }
+//     char* path = NULL;
+//     asprintf(&path, "%s%s", DocumentsPath, filename);
 
-    size_t bytesWritten = fwrite(data, sizeof(SaveFile), 1, save);
-    fclose(save);
-    if(bytesWritten != 1) {
-        printf("Error writing to file: %s\n", path);
-        return 1;
-    }
-    return 0;
-}
+//     FILE *save = fopen(path, "wb");
+//     if(save == NULL) {
+//         printf("Failed to open savefile: %s when writing\n", path);
+//         return 1;
+//     }
 
-void closeSavefile(SaveFile* data) {
-    free(data->components);
-    free(data);
-}
+//     size_t bytesWritten = fwrite(data, sizeof(SaveFile), 1, save);
+//     fclose(save);
+//     if(bytesWritten != 1) {
+//         printf("Error writing to file: %s\n", path);
+//         return 1;
+//     }
+//     return 0;
+// }
+
+// void closeSavefile(SaveFile* data) {
+//     free(data->components);
+//     free(data);
+// }
