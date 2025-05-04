@@ -22,10 +22,10 @@ typedef struct {
     char** dialog;
     size_t dialogCount;
 
-    int **levelInputs;
-    size_t InputAmount; //how many inputs does the design have
-    int **levelOutputs;
-    size_t OutputAmount; //how many outputs does the design have
+    uint8_t **levelInputs;
+    size_t inputAmount; //how many inputs does the design have
+    uint8_t **levelOutputs;
+    size_t outputAmount; //how many outputs does the design have
     
     size_t pairCount; //how many input-output pairs (test cases) does the level have
     //the levelInputs and levelOutput arrays are pairCount long
@@ -40,5 +40,7 @@ typedef struct {
 //
 
 int loadLevel(char *filename, Level** levelPtr);
+
+int freeLevel(Level *level);
 
 #endif
