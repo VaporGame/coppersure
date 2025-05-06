@@ -11,7 +11,7 @@ typedef enum {
 } ButtonStyle;
 
 typedef struct {
-    Component _;
+    GUIComponent _;
     char* text;
     SDL_FRect clipRect;
     enum {IDLE, HOVERED, PRESSED} state;
@@ -23,7 +23,7 @@ typedef struct {
 } Button;
 
 typedef struct {
-    Component _;
+    GUIComponent _;
     int *buttons;
     size_t buttonsCount;
 } Dropdown;

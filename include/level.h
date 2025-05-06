@@ -9,6 +9,8 @@
 //array of inputs and their corresponding correct outputs.
 
 #define MAGIC 0x43535245 //CSRE
+//the level folder path will be ../ right now because in the final game it should be in the same directory as the executable
+#define LEVEL_FOLDER_PATH "../levels/"
 
 typedef struct {
     uint32_t magic;

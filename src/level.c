@@ -2,9 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//the level folder path will be ../ right now because in the final game it should be in the same directory as the executable
-#define LEVEL_FOLDER_PATH "../levels/"
-
 static char* readString(FILE* f) {
     uint32_t len;
     fread(&len, sizeof(uint32_t), 1, f);
